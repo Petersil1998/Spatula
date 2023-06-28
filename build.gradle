@@ -1,0 +1,29 @@
+plugins {
+    id 'java-library'
+}
+
+group 'net.petersil98'
+version '1.0'
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.7.1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.15.2'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
+    implementation 'com.github.Petersil1998:Core:main-SNAPSHOT'
+    implementation 'com.github.Petersil1998:STCommons:main-SNAPSHOT'
+}
+
+test {
+    useJUnitPlatform()
+}
