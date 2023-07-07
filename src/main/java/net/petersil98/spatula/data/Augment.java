@@ -1,10 +1,13 @@
 package net.petersil98.spatula.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class Augment {
+    @JsonProperty("apiName")
     private final String id;
     private final String name;
     private final List<Trait> associatedTraits;

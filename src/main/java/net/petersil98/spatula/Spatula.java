@@ -1,9 +1,10 @@
 package net.petersil98.spatula;
 
+import net.petersil98.core.constant.Platform;
+import net.petersil98.core.constant.Region;
 import net.petersil98.core.util.EncryptionUtil;
 import net.petersil98.core.util.Loader;
 import net.petersil98.core.util.settings.Language;
-import net.petersil98.core.util.settings.ServerConfig;
 import net.petersil98.core.util.settings.Settings;
 import net.petersil98.spatula.collection.Tacticians;
 import net.petersil98.spatula.data.Tactician;
@@ -25,14 +26,13 @@ public class Spatula {
     public static void main(String[] args) {
         Settings.setAPIKey(() -> EncryptionUtil.encrypt(System.getenv("API_KEY")));
         Settings.setDecryptor(EncryptionUtil::decrypt);
-        Settings.setServerConfig(ServerConfig.EUW_CONFIG);
         Settings.setLanguage(Language.EN_US);
         Loader.addLoader(new TftLoader());
         Loader.init();
-        Summoner me = Summoner.getSummonerByName("petersil98");
-        League masters = TfTRanked.getMasterLeague();
+        Summoner me = Summoner.getSummonerByName("petersil98", Platform.EUW);
+        League masters = TfTRanked.getMasterLeague(Platform.EUNE);
         Tactician tactician = Tacticians.getTactician(9016);
-        List<MatchDetails> details = MatchDetails.getMatchHistory(me, Map.of());
+        List<MatchDetails> details = MatchDetails.getMatchHistory(me.getPuuid(), Region.EUROPE, Map.of());
         System.out.println(me);
     }
 }

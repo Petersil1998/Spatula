@@ -4,7 +4,6 @@ import net.petersil98.spatula.data.Augment;
 import net.petersil98.spatula.data.Item;
 import net.petersil98.spatula.data.Trait;
 import net.petersil98.spatula.data.Unit;
-import net.petersil98.stcommons.model.Summoner;
 
 import java.util.List;
 
@@ -18,7 +17,6 @@ public class Participant {
     private final int partnerGroupId;
     private final int playerEliminated;
     private final String puuid;
-    private Summoner summoner;
     private final float timeEliminated;
     private final int totalDamageToPlayers;
     private final List<TraitData> traits;
@@ -74,11 +72,6 @@ public class Participant {
 
     public String getPuuid() {
         return puuid;
-    }
-
-    public Summoner getSummoner() {
-        if(this.summoner == null) this.summoner = Summoner.getSummonerByPUUID(this.puuid);
-        return summoner;
     }
 
     public float getTimeEliminated() {

@@ -1,15 +1,19 @@
 package net.petersil98.spatula.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class Trait {
 
+    @JsonProperty("apiName")
     private String id;
     private String desc;
     private List<Effect> effects;
     private String name;
+    @JsonProperty("icon")
     private String image;
 
     public String getId() {

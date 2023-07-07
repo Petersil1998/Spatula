@@ -2,17 +2,19 @@ package net.petersil98.spatula.collection;
 
 import net.petersil98.spatula.data.QueueType;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class QueueTypes {
 
-    private static List<QueueType> queueTypes;
+    private static Map<Integer, QueueType> queueTypes;
 
     public static QueueType getQueueType(int id){
-        return queueTypes.stream().filter(queueType -> queueType.getId() == id).findFirst().orElse(null);
+        return queueTypes.get(id);
     }
 
     public static List<QueueType> getQueueTypes() {
-        return queueTypes;
+        return new ArrayList<>(queueTypes.values());
     }
 }

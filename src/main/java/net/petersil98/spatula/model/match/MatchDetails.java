@@ -2,11 +2,11 @@ package net.petersil98.spatula.model.match;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import net.petersil98.core.http.RiotAPIRequest;
+import net.petersil98.core.constant.Region;
+import net.petersil98.core.http.RiotAPI;
 import net.petersil98.spatula.data.QueueType;
 import net.petersil98.spatula.model.Deserializers;
 import net.petersil98.spatula.util.Util;
-import net.petersil98.stcommons.model.Summoner;
 
 import java.util.List;
 
@@ -33,18 +33,14 @@ public class MatchDetails {
         this.tftSetNumber = tftSetNumber;
     }
 
-    public static MatchDetails getMatchDetails(String matchId) {
-        return RiotAPIRequest.requestTftMatchEndpoint("matches/" + matchId, MatchDetails.class);
+    public static MatchDetails getMatchDetails(String matchId, Region region) {
+        return RiotAPI.requestTftMatchEndpoint("matches/", matchId, region, MatchDetails.class);
     }
 
-    public static List<MatchDetails> getMatchHistory(Summoner summoner, java.util.Map<String, String> filter) {
-        return getMatchHistory(summoner.getPuuid(), filter);
-    }
-
-    public static List<MatchDetails> getMatchHistory(String puuid, java.util.Map<String, String> filter) {
+    public static List<MatchDetails> getMatchHistory(String puuid, Region region, java.util.Map<String, String> filter) {
         Util.validateFilter(filter);
-        List<String> matchIds = RiotAPIRequest.requestTftMatchEndpoint("matches/by-puuid/" + puuid + "/ids", TypeFactory.defaultInstance().constructCollectionType(List.class, String.class), filter);
-        return matchIds.stream().map(MatchDetails::getMatchDetails).toList();
+        List<String> matchIds = RiotAPI.requestTftMatchEndpoint("matches/by-puuid/", puuid + "/ids", region, TypeFactory.defaultInstance().constructCollectionType(List.class, String.class), filter);
+        return matchIds.stream().map(matchId -> getMatchDetails(matchId, region)).toList();
     }
 
     public long getGameDatetime() {
