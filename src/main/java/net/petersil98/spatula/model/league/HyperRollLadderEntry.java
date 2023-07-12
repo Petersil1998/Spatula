@@ -1,7 +1,5 @@
 package net.petersil98.spatula.model.league;
 
-import net.petersil98.stcommons.model.league.RatedTier;
-
 public class HyperRollLadderEntry {
     private String summonerId;
     private String summonerName;

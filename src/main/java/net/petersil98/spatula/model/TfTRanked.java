@@ -1,14 +1,14 @@
 package net.petersil98.spatula.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.petersil98.core.constant.Platform;
-import net.petersil98.core.constant.RankedDivision;
-import net.petersil98.core.constant.RankedQueue;
-import net.petersil98.core.constant.RankedTier;
-import net.petersil98.core.http.RiotAPI;
+import net.petersil98.spatula.http.TfTAPI;
+import net.petersil98.spatula.model.league.HyperRollEntry;
 import net.petersil98.spatula.model.league.HyperRollLadderEntry;
-import net.petersil98.stcommons.model.league.AbstractEntry;
-import net.petersil98.stcommons.model.league.HyperRollEntry;
+import net.petersil98.stcommons.constants.RankedDivision;
+import net.petersil98.stcommons.constants.RankedQueue;
+import net.petersil98.stcommons.constants.RankedTier;
 import net.petersil98.stcommons.model.league.League;
 import net.petersil98.stcommons.model.league.RankEntry;
 
@@ -32,24 +32,24 @@ public class TfTRanked {
     }
 
     public static List<HyperRollLadderEntry> getTopHyperRollPlayers(Platform platform) {
-        return RiotAPI.requestTftLeagueEndpoint("rated-ladders/", String.format("%s/top", RankedQueue.HYPER_ROLL.getJsonPropertyValue()),
+        return TfTAPI.requestTftLeagueEndpoint("rated-ladders/", String.format("%s/top", RankedQueue.HYPER_ROLL.getJsonPropertyValue()),
                 platform, TypeFactory.defaultInstance().constructCollectionType(List.class, HyperRollLadderEntry.class));
     }
 
     public static League getTftLeagueById(String id, Platform platform) {
-        return RiotAPI.requestTftLeagueEndpoint("leagues/", id, platform, League.class);
+        return TfTAPI.requestTftLeagueEndpoint("leagues/", id, platform, League.class);
     }
 
     public static League getMasterLeague(Platform platform) {
-        return RiotAPI.requestTftLeagueEndpoint("master", "", platform, League.class);
+        return TfTAPI.requestTftLeagueEndpoint("master", "", platform, League.class);
     }
 
     public static League getGrandmasterLeague(Platform platform) {
-        return RiotAPI.requestTftLeagueEndpoint("grandmaster", "", platform, League.class);
+        return TfTAPI.requestTftLeagueEndpoint("grandmaster", "", platform, League.class);
     }
 
     public static League getChallengerLeague(Platform platform) {
-        return RiotAPI.requestTftLeagueEndpoint("challenger", "", platform, League.class);
+        return TfTAPI.requestTftLeagueEndpoint("challenger", "", platform, League.class);
     }
 
     public static List<RankEntry> getTftRankEntries(RankedDivision division, RankedTier tier, Platform platform) {
@@ -57,17 +57,17 @@ public class TfTRanked {
     }
 
     public static List<RankEntry> getTftRankEntries(RankedDivision division, RankedTier tier, Platform platform, int pageNumber) {
-        return RiotAPI.requestTftLeagueEndpoint("entries/", String.format("%s/%s", tier.name(), division.name()), platform,
+        return TfTAPI.requestTftLeagueEndpoint("entries/", String.format("%s/%s", tier.name(), division.name()), platform,
                 TypeFactory.defaultInstance().constructCollectionType(List.class, RankEntry.class), Map.of("page", String.valueOf(pageNumber)));
     }
 
     private void initRanks() {
         if(this.rankTft == null || this.rankHyperRoll == null || this.rankDoubleUp == null) {
-            List<AbstractEntry> ranks = RiotAPI.requestTftLeagueEndpoint("entries/by-summoner/", this.summonerId, this.platform, TypeFactory.defaultInstance().constructCollectionType(List.class, AbstractEntry.class));
-            ranks.addAll(RiotAPI.requestLoLLeagueEndpoint("entries/by-summoner/", this.summonerId, this.platform, TypeFactory.defaultInstance().constructCollectionType(List.class, RankEntry.class)));
-            this.rankTft = ranks.stream().filter(rank -> rank.getQueueType().equals(RankedQueue.TFT)).map(entry -> ((RankEntry) entry)).findFirst().orElse(RankEntry.UNRANKED);
-            this.rankHyperRoll = ranks.stream().filter(rank -> rank.getQueueType().equals(RankedQueue.HYPER_ROLL)).map(entry -> ((HyperRollEntry) entry)).findFirst().orElse(HyperRollEntry.UNRANKED);
-            this.rankDoubleUp = ranks.stream().filter(rank -> rank.getQueueType().equals(RankedQueue.DOUBLE_UP)).map(entry -> ((RankEntry) entry)).findFirst().orElse(RankEntry.UNRANKED);
+            List<JsonNode> rankNodes = TfTAPI.requestTftLeagueEndpoint("entries/by-summoner/", this.summonerId, this.platform, TypeFactory.defaultInstance().constructCollectionType(List.class, JsonNode.class));
+            this.rankTft = Deserializers.getTfTRankEntryFromEntries(rankNodes);
+            this.rankHyperRoll = Deserializers.getHyperRollEntryFromEntries(rankNodes);
+            List<RankEntry> lolRanks = TfTAPI.requestLoLLeagueEndpoint("entries/by-summoner/", this.summonerId, this.platform, TypeFactory.defaultInstance().constructCollectionType(List.class, RankEntry.class));
+            this.rankDoubleUp = lolRanks.stream().filter(rank -> rank.getQueueType().equals(RankedQueue.DOUBLE_UP)).findFirst().orElse(RankEntry.UNRANKED);
         }
     }
 

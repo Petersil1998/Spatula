@@ -9,9 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.petersil98.spatula.collection.*;
 import net.petersil98.spatula.data.Augment;
 import net.petersil98.spatula.data.Trait;
+import net.petersil98.spatula.model.league.HyperRollEntry;
 import net.petersil98.spatula.model.match.Companion;
 import net.petersil98.spatula.model.match.MatchDetails;
 import net.petersil98.spatula.model.match.Participant;
+import net.petersil98.stcommons.constants.RankedQueue;
+import net.petersil98.stcommons.model.league.RankEntry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,5 +62,31 @@ public class Deserializers {
                     info.get("game_version").asText(), participants, QueueTypes.getQueueType(info.get("queue_id").asInt()),
                     info.get("tft_game_type").asText(), info.get("tft_set_number").asInt());
         }
+    }
+
+    public static RankEntry getTfTRankEntryFromEntries(List<JsonNode> nodes) {
+        for (JsonNode node: nodes) {
+            try {
+                if(MAPPER.readerFor(RankedQueue.class).readValue(node.get("queueType")) != RankedQueue.TFT) continue;
+                return MAPPER.readerFor(RankEntry.class).readValue(node);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return RankEntry.UNRANKED;
+    }
+
+    public static HyperRollEntry getHyperRollEntryFromEntries(List<JsonNode> nodes) {
+        for (JsonNode node: nodes) {
+            try {
+                if(MAPPER.readerFor(RankedQueue.class).readValue(node.get("queueType")) != RankedQueue.HYPER_ROLL) continue;
+                return MAPPER.readerFor(HyperRollEntry.class).readValue(node);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return HyperRollEntry.UNRANKED;
     }
 }
