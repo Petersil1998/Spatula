@@ -28,7 +28,7 @@ public class Deserializers {
     public static class MatchDetailsDeserializer extends JsonDeserializer<MatchDetails> {
 
         @Override
-        public MatchDetails deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+        public MatchDetails deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             JsonNode root = p.getCodec().readTree(p);
             JsonNode info = root.get("info");
             List<Participant> participants = new ArrayList<>(8);

@@ -15,20 +15,16 @@ public class Item {
     private final Map<String, Float> effects;
     private final String image;
     private final List<Trait> incompatibleTraits;
-
-    // FIXME: 18.06.2023 Some Traits arent in community dragon's JSON, so i just store the Strings in case the Trait isn't found
-    private final List<String> incompatibleTraitsString;
     private final String name;
     private final boolean unique;
 
-    public Item(String id, String desc, Map<String, Float> effects, String image, List<Trait> incompatibleTraits, List<String> incompatibleTraitsString, String name, boolean unique) {
+    public Item(String id, String desc, Map<String, Float> effects, String image, List<Trait> incompatibleTraits, String name, boolean unique) {
         this.id = id;
         this.composition = new ArrayList<>();
         this.desc = desc;
         this.effects = effects;
         this.image = image;
         this.incompatibleTraits = incompatibleTraits;
-        this.incompatibleTraitsString = incompatibleTraitsString;
         this.name = name;
         this.unique = unique;
     }
@@ -61,10 +57,6 @@ public class Item {
 
     public List<Trait> getIncompatibleTraits() {
         return incompatibleTraits;
-    }
-
-    public List<String> getIncompatibleTraitsString() {
-        return incompatibleTraitsString;
     }
 
     public String getName() {

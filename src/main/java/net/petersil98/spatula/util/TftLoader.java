@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.petersil98.core.Core;
-import net.petersil98.core.constant.Constants;
-import net.petersil98.core.data.Sprite;
 import net.petersil98.core.util.Loader;
 import net.petersil98.core.util.settings.Settings;
 import net.petersil98.spatula.Spatula;
 import net.petersil98.spatula.collection.*;
 import net.petersil98.spatula.data.*;
+import net.petersil98.stcommons.constants.STConstants;
+import net.petersil98.stcommons.data.Sprite;
 import org.apache.logging.log4j.core.util.IOUtils;
 
 import java.io.IOException;
@@ -46,12 +46,12 @@ public class TftLoader extends Loader {
 
     @Override
     protected boolean shouldReloadData() {
-        String versionsUrl = Constants.DDRAGON_BASE_PATH + "api/versions.json";
+        String versionsUrl = STConstants.DDRAGON_BASE_PATH + "api/versions.json";
         try(InputStream lolVersion = URI.create(versionsUrl).toURL().openConnection().getInputStream()) {
             String[] versions = Core.MAPPER.readValue(IOUtils.toString(new InputStreamReader(lolVersion)), TypeFactory.defaultInstance().constructArrayType(String.class));
-            Constants.DDRAGON_VERSION = versions[0];
-            if(!latestDDragonVersion.equals(Constants.DDRAGON_VERSION)) {
-                latestDDragonVersion = Constants.DDRAGON_VERSION;
+            STConstants.DDRAGON_VERSION = versions[0];
+            if(!latestDDragonVersion.equals(STConstants.DDRAGON_VERSION)) {
+                latestDDragonVersion = STConstants.DDRAGON_VERSION;
                 return true;
             }
         } catch (IOException e) {
@@ -61,10 +61,10 @@ public class TftLoader extends Loader {
     }
 
     private static void loadLatestVersions() {
-        String versionsUrl = Constants.DDRAGON_BASE_PATH + "api/versions.json";
+        String versionsUrl = STConstants.DDRAGON_BASE_PATH + "api/versions.json";
         try(InputStream lolVersion = URI.create(versionsUrl).toURL().openConnection().getInputStream()) {
             String[] versions = Core.MAPPER.readValue(IOUtils.toString(new InputStreamReader(lolVersion)), TypeFactory.defaultInstance().constructArrayType(String.class));
-            Constants.DDRAGON_VERSION = versions[0];
+            STConstants.DDRAGON_VERSION = versions[0];
             latestDDragonVersion = versions[0];
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,7 +72,7 @@ public class TftLoader extends Loader {
     }
 
     private void loadQueueTypes() {
-        try(InputStream in = new URI(String.format("%scdn/%s/data/%s/tft-queues.json", Constants.DDRAGON_BASE_PATH, Constants.DDRAGON_VERSION, Settings.getLanguage().toString())).toURL().openStream()) {
+        try(InputStream in = new URI(String.format("%scdn/%s/data/%s/tft-queues.json", STConstants.DDRAGON_BASE_PATH, STConstants.DDRAGON_VERSION, Settings.getLanguage().toString())).toURL().openStream()) {
             Map<Integer, QueueType> queueTypes = new HashMap<>();
             for(JsonNode queue: MAPPER.readTree(in).get("data")) {
                 Sprite sprite = new Sprite(queue.get("image").get("sprite").asText(),
@@ -188,7 +188,6 @@ public class TftLoader extends Loader {
                 String id = node.get("apiName").asText();
                 items.put(id, new Item(id, node.get("desc").asText(), effects,
                         node.get("icon").asText(), incompatibleTraits,
-                        MAPPER.readValue(node.get("incompatibleTraits").toString(), TypeFactory.defaultInstance().constructCollectionType(List.class, String.class)),
                         node.get("name").asText(), node.get("unique").asBoolean()));
                 if(node.get("composition").size() > 0) {
                     List<String> composition = MAPPER.readValue(node.get("composition").toString(),
