@@ -1,9 +1,12 @@
 package net.petersil98.spatula.data;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import net.petersil98.spatula.model.Deserializers;
 import net.petersil98.stcommons.data.Sprite;
 
 import java.util.Objects;
 
+@JsonDeserialize(using = Deserializers.QueueTypeDeserializer.class)
 public class QueueType {
 
     private final int id;

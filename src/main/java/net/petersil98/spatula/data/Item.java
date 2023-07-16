@@ -1,12 +1,16 @@
 package net.petersil98.spatula.data;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.petersil98.spatula.collection.Items;
+import net.petersil98.spatula.model.Deserializers;
 import net.petersil98.spatula.util.TftLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+@JsonDeserialize(using = Deserializers.ItemDeserializer.class)
 public class Item {
 
     private final String id;
@@ -65,5 +69,18 @@ public class Item {
 
     public boolean isUnique() {
         return unique;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return Objects.equals(id, item.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -1,11 +1,14 @@
 package net.petersil98.spatula.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import net.petersil98.spatula.model.Deserializers;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@JsonDeserialize(using = Deserializers.AugmentDeserializer.class)
 public class Augment {
     @JsonProperty("apiName")
     private final String id;

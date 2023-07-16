@@ -1,12 +1,15 @@
 package net.petersil98.spatula.model.match;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.petersil98.spatula.data.Augment;
 import net.petersil98.spatula.data.Item;
 import net.petersil98.spatula.data.Trait;
 import net.petersil98.spatula.data.Unit;
+import net.petersil98.spatula.model.Deserializers;
 
 import java.util.List;
 
+@JsonDeserialize(using = Deserializers.ParticipantDeserializer.class)
 public class Participant {
     private final List<Augment> augments;
     private final Companion companion;
@@ -90,6 +93,7 @@ public class Participant {
         return units;
     }
 
+    @JsonDeserialize(using = Deserializers.TraitDataDeserializer.class)
     public static class TraitData {
         private final Trait trait;
         private final int numUnits;
@@ -114,6 +118,7 @@ public class Participant {
         }
     }
 
+    @JsonDeserialize(using = Deserializers.UnitDataDeserializer.class)
     public static class UnitData {
 
         private final Unit unit;

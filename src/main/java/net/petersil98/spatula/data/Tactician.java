@@ -1,14 +1,17 @@
 package net.petersil98.spatula.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.petersil98.spatula.collection.Items;
 import net.petersil98.spatula.collection.Tacticians;
+import net.petersil98.spatula.model.Deserializers;
 import net.petersil98.spatula.util.TftLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@JsonDeserialize(using = Deserializers.TacticianDeserializer.class)
 public class Tactician {
 
     private final int id;

@@ -19,9 +19,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static net.petersil98.spatula.model.Deserializers.MAPPER;
@@ -75,15 +74,8 @@ public class TftLoader extends Loader {
         try(InputStream in = new URI(String.format("%scdn/%s/data/%s/tft-queues.json", STConstants.DDRAGON_BASE_PATH, STConstants.DDRAGON_VERSION, Settings.getLanguage().toString())).toURL().openStream()) {
             Map<Integer, QueueType> queueTypes = new HashMap<>();
             for(JsonNode queue: MAPPER.readTree(in).get("data")) {
-                Sprite sprite = new Sprite(queue.get("image").get("sprite").asText(),
-                        queue.get("image").get("group").asText(),
-                        queue.get("image").get("x").asInt(),
-                        queue.get("image").get("y").asInt(),
-                        queue.get("image").get("w").asInt(),
-                        queue.get("image").get("h").asInt());
-                int id = queue.get("id").asInt();
-                queueTypes.put(id, new QueueType(id, queue.get("name").asText(),
-                        queue.get("queueType").asText(), sprite, queue.get("image").get("full").asText()));
+                QueueType queueType = MAPPER.readerFor(QueueType.class).readValue(queue);
+                queueTypes.put(queueType.getId(), queueType);
             }
             setFieldInCollection(QueueTypes.class, queueTypes);
         } catch (IOException | URISyntaxException e) {
@@ -95,15 +87,11 @@ public class TftLoader extends Loader {
         try(InputStream in = new URI("https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/companions.json").toURL().openStream()) {
             TACTICIANS_UPGRADES.clear();
             Map<Integer, Tactician> tacticians = new HashMap<>();
-            for(JsonNode tactician: MAPPER.readTree(in)) {
-                int id = tactician.get("itemId").asInt();
-                tacticians.put(id, new Tactician(id, tactician.get("contentId").asText(),
-                        tactician.get("level").asInt(), tactician.get("name").asText(), tactician.get("loadoutsIcon").asText(),
-                        tactician.get("description").asText(), tactician.get("speciesName").asText(), tactician.get("speciesId").asInt(),
-                        MAPPER.readerFor(Tactician.Rarity.class).readValue(tactician.get("rarity")),
-                        tactician.get("isDefault").asBoolean(), tactician.get("TFTOnly").asBoolean()));
-                TACTICIANS_UPGRADES.put(tactician.get("contentId").asText(),
-                        MAPPER.readValue(tactician.get("upgrades").toString(), TypeFactory.defaultInstance().constructCollectionType(List.class, String.class)));
+            for(JsonNode node: MAPPER.readTree(in)) {
+                Tactician tactician = MAPPER.readerFor(Tactician.class).readValue(node);
+                tacticians.put(tactician.getId(), tactician);
+                TACTICIANS_UPGRADES.put(node.get("contentId").asText(),
+                        MAPPER.readerForListOf(String.class).readValue(node.get("upgrades")));
             }
             setFieldInCollection(Tacticians.class, tacticians);
             Tacticians.getTacticians().forEach(Tactician::postInit);
@@ -114,21 +102,15 @@ public class TftLoader extends Loader {
 
     private void loadTraits() {
         try(InputStream in = new URI(String.format("https://raw.communitydragon.org/latest/cdragon/tft/%s.json", Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
-            Map<String, Trait> traits = new HashMap<>();
+            Set<Trait> traits = new HashSet<>();
             JsonNode rootNode = MAPPER.readTree(in);
             for (JsonNode node: rootNode.get("setData")) {
-                for(JsonNode traitNode: node.get("traits")) {
-                    Trait trait = MAPPER.readerFor(Trait.class).readValue(traitNode);
-                    traits.put(trait.getId(), trait);
-                }
+                traits.addAll(MAPPER.readerForListOf(Trait.class).readValue(node.get("traits")));
             }
             for (JsonNode node: rootNode.get("sets")) {
-                for(JsonNode traitNode: node.get("traits")) {
-                    Trait trait = MAPPER.readerFor(Trait.class).readValue(traitNode);
-                    traits.put(trait.getId(), trait);
-                }
+                traits.addAll(MAPPER.readerForListOf(Trait.class).readValue(node.get("traits")));
             }
-            setFieldInCollection(Traits.class, traits);
+            setFieldInCollection(Traits.class, traits.stream().collect(Collectors.toMap(Trait::getId, trait -> trait)));
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -137,15 +119,10 @@ public class TftLoader extends Loader {
     private void loadAugments() {
         try(InputStream in = new URI(String.format("https://raw.communitydragon.org/latest/cdragon/tft/%s.json", Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
             Map<String, Augment> augments = new HashMap<>();
-            for (JsonNode augment: MAPPER.readTree(in).get("items")) {
-                if(!augment.get("apiName").asText().contains("_Augment_")) continue;
-                List<Trait> associatedTraits = StreamSupport.stream(augment.get("associatedTraits").spliterator(), false)
-                        .map(node -> Traits.getTraitByIdOrName(node.asText())).toList();
-                Map<String, Float> effects = MAPPER.readValue(augment.get("effects").toString(), TypeFactory.defaultInstance().constructMapType(Map.class, String.class, Float.class));
-                String id = augment.get("apiName").asText();
-                augments.put(id, new Augment(id,
-                        augment.get("name").asText(), associatedTraits,
-                        augment.get("desc").asText(), effects, augment.get("icon").asText()));
+            for (JsonNode node: MAPPER.readTree(in).get("items")) {
+                if(!node.get("apiName").asText().contains("_Augment_")) continue;
+                Augment augment = MAPPER.readerFor(Augment.class).readValue(node);
+                augments.put(augment.getId(), augment);
             }
             setFieldInCollection(Augments.class, augments);
         } catch (IOException | URISyntaxException e) {
@@ -156,21 +133,14 @@ public class TftLoader extends Loader {
     private void loadUnits() {
         try(InputStream in = new URI(String.format("https://raw.communitydragon.org/latest/cdragon/tft/%s.json", Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
             JsonNode rootNode = MAPPER.readTree(in);
-            Map<String, Unit> units = new HashMap<>();
+            Set<Unit> units = new HashSet<>();
             for (JsonNode node: rootNode.get("setData")) {
-                for(JsonNode unitNode: node.get("champions")) {
-                    Unit unit = parseUnit(unitNode);
-                    units.put(unit.getId(), unit);
-                }
+                units.addAll(MAPPER.readerForListOf(Unit.class).readValue(node.get("champions")));
             }
-
             for (JsonNode node: rootNode.get("sets")) {
-                for(JsonNode unitNode: node.get("champions")) {
-                    Unit unit = parseUnit(unitNode);
-                    units.put(unit.getId(), unit);
-                }
+                units.addAll(MAPPER.readerForListOf(Unit.class).readValue(node.get("champions")));
             }
-            setFieldInCollection(Units.class, units);
+            setFieldInCollection(Units.class, units.stream().collect(Collectors.toMap(Unit::getId, unit -> unit)));
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -182,17 +152,11 @@ public class TftLoader extends Loader {
             Map<String, Item> items = new HashMap<>();
             for (JsonNode node: MAPPER.readTree(in).get("items")) {
                 if(!node.get("apiName").asText().contains("_Item_")) continue;
-                Map<String, Float> effects = MAPPER.readValue(node.get("effects").toString(), TypeFactory.defaultInstance().constructMapType(Map.class, String.class, Float.class));
-                List<Trait> incompatibleTraits = StreamSupport.stream(node.get("incompatibleTraits").spliterator(), false)
-                        .map(jsonNode -> Traits.getTraitByIdOrName(jsonNode.asText())).toList();
-                String id = node.get("apiName").asText();
-                items.put(id, new Item(id, node.get("desc").asText(), effects,
-                        node.get("icon").asText(), incompatibleTraits,
-                        node.get("name").asText(), node.get("unique").asBoolean()));
+                Item item = MAPPER.readerFor(Item.class).readValue(node);
+                items.put(item.getId(), item);
                 if(node.get("composition").size() > 0) {
-                    List<String> composition = MAPPER.readValue(node.get("composition").toString(),
-                            TypeFactory.defaultInstance().constructCollectionType(List.class, String.class));
-                    ITEMS_COMPOSITIONS.put(node.get("id").asText(), composition);
+                    ITEMS_COMPOSITIONS.put(item.getId(),
+                            MAPPER.readerForListOf(String.class).readValue(node.get("composition")));
                 }
             }
             setFieldInCollection(Items.class, items);
@@ -200,16 +164,6 @@ public class TftLoader extends Loader {
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
-    }
-
-    private Unit parseUnit(JsonNode unit) throws JsonProcessingException {
-        Unit.Ability ability = MAPPER.readValue(unit.get("ability").toString(), Unit.Ability.class);
-        Unit.Stats stats = MAPPER.readValue(unit.get("stats").toString(), Unit.Stats.class);
-        List<Trait> traits = StreamSupport.stream(unit.get("traits").spliterator(), false)
-                .map(jsonNode -> Traits.getTraitByName(jsonNode.asText())).toList();
-        String id = unit.get("apiName").asText();
-        return new Unit(ability, id, unit.get("cost").asInt(),
-                unit.get("icon").asText(), unit.get("name").asText(), stats, traits);
     }
 
     private void setFieldInCollection(Class<?> collectionClass, Map<?,?> elements) {
