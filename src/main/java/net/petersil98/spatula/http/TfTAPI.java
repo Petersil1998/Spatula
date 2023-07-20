@@ -3,9 +3,9 @@ package net.petersil98.spatula.http;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import net.petersil98.core.constant.Platform;
-import net.petersil98.core.constant.Region;
 import net.petersil98.core.util.settings.Settings;
+import net.petersil98.stcommons.constants.LeaguePlatform;
+import net.petersil98.stcommons.constants.LeagueRegion;
 import net.petersil98.stcommons.http.LeagueAPI;
 
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class TfTAPI extends LeagueAPI {
      * @param requiredClass Class to which the response should get mapped to
      * @return An object of class <b>T</b> if casting is successful, {@code null} otherwise
      */
-    public static <T> T requestTftLeagueEndpoint(String method, String args, Platform platform, Class<T> requiredClass) {
+    public static <T> T requestTftLeagueEndpoint(String method, String args, LeaguePlatform platform, Class<T> requiredClass) {
         return requestTftLeagueEndpoint(method, args, platform, requiredClass, new HashMap<>());
     }
 
@@ -43,7 +43,7 @@ public class TfTAPI extends LeagueAPI {
      * @param requiredClass Class to which the response should get mapped to
      * @return An object of Type <b>{@code requiredClass}</b> if casting is successful, {@code null} otherwise
      */
-    public static <T> T requestTftLeagueEndpoint(String method, String args, Platform platform, TypeBase requiredClass) {
+    public static <T> T requestTftLeagueEndpoint(String method, String args, LeaguePlatform platform, TypeBase requiredClass) {
         return requestTftLeagueEndpoint(method, args, platform, requiredClass, new HashMap<>());
     }
 
@@ -59,7 +59,7 @@ public class TfTAPI extends LeagueAPI {
      *               even if they represent an integer
      * @return An object of class <b>T</b> if casting is successful, {@code null} otherwise
      */
-    public static <T> T requestTftLeagueEndpoint(String method, String args, Platform platform, Class<T> requiredClass, Map<String, String> filter) {
+    public static <T> T requestTftLeagueEndpoint(String method, String args, LeaguePlatform platform, Class<T> requiredClass, Map<String, String> filter) {
         return requestTftLeagueEndpoint(method, args, platform, TypeFactory.defaultInstance().constructType(requiredClass), filter);
     }
 
@@ -76,10 +76,10 @@ public class TfTAPI extends LeagueAPI {
      *               even if they represent an integer
      * @return An object of Type <b>{@code requiredClass}</b> if casting is successful, {@code null} otherwise
      */
-    public static <T> T requestTftLeagueEndpoint(String method, String args, Platform platform, JavaType requiredClass, Map<String, String> filter) {
+    public static <T> T requestTftLeagueEndpoint(String method, String args, LeaguePlatform platform, JavaType requiredClass, Map<String, String> filter) {
         return handleCacheAndRateLimiter(
                 constructUrl(TFT_LEAGUE_V1 + method + args, AppType.TFT, platform),
-                TFT_LEAGUE_V1 + method, Region.byPlatform(platform), requiredClass, filter);
+                TFT_LEAGUE_V1 + method, LeagueRegion.byPlatform(platform), requiredClass, filter);
     }
 
     /**
@@ -92,7 +92,7 @@ public class TfTAPI extends LeagueAPI {
      * @param requiredClass Class to which the response should get mapped to
      * @return An object of class <b>T</b> if casting is successful, {@code null} otherwise
      */
-    public static <T> T requestTftMatchEndpoint(String method, String args, Region region, Class<T> requiredClass) {
+    public static <T> T requestTftMatchEndpoint(String method, String args, LeagueRegion region, Class<T> requiredClass) {
         return requestTftMatchEndpoint(method, args, region, requiredClass, new HashMap<>());
     }
 
@@ -109,7 +109,7 @@ public class TfTAPI extends LeagueAPI {
      * @param requiredClass Class to which the response should get mapped to
      * @return An object of Type <b>{@code requiredClass}</b> if casting is successful, {@code null} otherwise
      */
-    public static <T> T requestTftMatchEndpoint(String method, String args, Region region, TypeBase requiredClass) {
+    public static <T> T requestTftMatchEndpoint(String method, String args, LeagueRegion region, TypeBase requiredClass) {
         return requestTftMatchEndpoint(method, args, region, requiredClass, new HashMap<>());
     }
 
@@ -125,7 +125,7 @@ public class TfTAPI extends LeagueAPI {
      *               even if they represent an integer
      * @return An object of class <b>T</b> if casting is successful, {@code null} otherwise
      */
-    public static <T> T requestTftMatchEndpoint(String method, String args, Region region, Class<T> requiredClass, Map<String, String> filter) {
+    public static <T> T requestTftMatchEndpoint(String method, String args, LeagueRegion region, Class<T> requiredClass, Map<String, String> filter) {
         return requestTftMatchEndpoint(method, args, region, TypeFactory.defaultInstance().constructType(requiredClass), filter);
     }
 
@@ -142,7 +142,7 @@ public class TfTAPI extends LeagueAPI {
      *               even if they represent an integer
      * @return An object of Type <b>{@code requiredClass}</b> if casting is successful, {@code null} otherwise
      */
-    public static <T> T requestTftMatchEndpoint(String method, String args, Region region, JavaType requiredClass, Map<String, String> filter) {
+    public static <T> T requestTftMatchEndpoint(String method, String args, LeagueRegion region, JavaType requiredClass, Map<String, String> filter) {
         return handleCacheAndRateLimiter(
                 constructUrl(TFT_MATCH_V1 + method + args, AppType.TFT, region),
                 TFT_MATCH_V1 + method, region, requiredClass, filter);

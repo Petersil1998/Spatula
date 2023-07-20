@@ -1,6 +1,5 @@
 package net.petersil98.spatula.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.petersil98.core.Core;
@@ -10,7 +9,6 @@ import net.petersil98.spatula.Spatula;
 import net.petersil98.spatula.collection.*;
 import net.petersil98.spatula.data.*;
 import net.petersil98.stcommons.constants.STConstants;
-import net.petersil98.stcommons.data.Sprite;
 import org.apache.logging.log4j.core.util.IOUtils;
 
 import java.io.IOException;
@@ -21,7 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static net.petersil98.spatula.model.Deserializers.MAPPER;
 

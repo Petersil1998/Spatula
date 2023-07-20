@@ -2,10 +2,10 @@ package net.petersil98.spatula.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import net.petersil98.core.constant.Platform;
 import net.petersil98.spatula.http.TfTAPI;
 import net.petersil98.spatula.model.league.HyperRollEntry;
 import net.petersil98.spatula.model.league.HyperRollLadderEntry;
+import net.petersil98.stcommons.constants.LeaguePlatform;
 import net.petersil98.stcommons.constants.RankedDivision;
 import net.petersil98.stcommons.constants.RankedQueue;
 import net.petersil98.stcommons.constants.RankedTier;
@@ -18,45 +18,45 @@ import java.util.Map;
 public class TfTRanked {
 
     private final String summonerId;
-    private final Platform platform;
+    private final LeaguePlatform platform;
     private RankEntry rankDoubleUp, rankTft;
     private HyperRollEntry rankHyperRoll;
 
-    private TfTRanked(String summonerId, Platform platform) {
+    private TfTRanked(String summonerId, LeaguePlatform platform) {
         this.summonerId = summonerId;
         this.platform = platform;
     }
 
-    public static TfTRanked getLoLRanksOfSummoner(String summonerId, Platform platform) {
+    public static TfTRanked getLoLRanksOfSummoner(String summonerId, LeaguePlatform platform) {
         return new TfTRanked(summonerId, platform);
     }
 
-    public static List<HyperRollLadderEntry> getTopHyperRollPlayers(Platform platform) {
+    public static List<HyperRollLadderEntry> getTopHyperRollPlayers(LeaguePlatform platform) {
         return TfTAPI.requestTftLeagueEndpoint("rated-ladders/", String.format("%s/top", RankedQueue.HYPER_ROLL.getJsonPropertyValue()),
                 platform, TypeFactory.defaultInstance().constructCollectionType(List.class, HyperRollLadderEntry.class));
     }
 
-    public static League getTftLeagueById(String id, Platform platform) {
+    public static League getTftLeagueById(String id, LeaguePlatform platform) {
         return TfTAPI.requestTftLeagueEndpoint("leagues/", id, platform, League.class);
     }
 
-    public static League getMasterLeague(Platform platform) {
+    public static League getMasterLeague(LeaguePlatform platform) {
         return TfTAPI.requestTftLeagueEndpoint("master", "", platform, League.class);
     }
 
-    public static League getGrandmasterLeague(Platform platform) {
+    public static League getGrandmasterLeague(LeaguePlatform platform) {
         return TfTAPI.requestTftLeagueEndpoint("grandmaster", "", platform, League.class);
     }
 
-    public static League getChallengerLeague(Platform platform) {
+    public static League getChallengerLeague(LeaguePlatform platform) {
         return TfTAPI.requestTftLeagueEndpoint("challenger", "", platform, League.class);
     }
 
-    public static List<RankEntry> getTftRankEntries(RankedDivision division, RankedTier tier, Platform platform) {
+    public static List<RankEntry> getTftRankEntries(RankedDivision division, RankedTier tier, LeaguePlatform platform) {
         return getTftRankEntries(division, tier, platform, 1);
     }
 
-    public static List<RankEntry> getTftRankEntries(RankedDivision division, RankedTier tier, Platform platform, int pageNumber) {
+    public static List<RankEntry> getTftRankEntries(RankedDivision division, RankedTier tier, LeaguePlatform platform, int pageNumber) {
         return TfTAPI.requestTftLeagueEndpoint("entries/", String.format("%s/%s", tier.name(), division.name()), platform,
                 TypeFactory.defaultInstance().constructCollectionType(List.class, RankEntry.class), Map.of("page", String.valueOf(pageNumber)));
     }
