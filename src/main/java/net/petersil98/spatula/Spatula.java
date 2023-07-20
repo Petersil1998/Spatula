@@ -6,6 +6,7 @@ import net.petersil98.core.util.settings.Language;
 import net.petersil98.core.util.settings.Settings;
 import net.petersil98.spatula.collection.Tacticians;
 import net.petersil98.spatula.data.Tactician;
+import net.petersil98.spatula.model.PlayerRanks;
 import net.petersil98.spatula.model.TfTRanked;
 import net.petersil98.spatula.model.match.MatchDetails;
 import net.petersil98.spatula.util.TftLoader;
@@ -30,7 +31,7 @@ public class Spatula {
         Loader.addLoader(new TftLoader());
         Loader.init();
         Summoner me = Summoner.getSummonerByName("meapok", LeaguePlatform.EUW);
-        TfTRanked myRanks = TfTRanked.getLoLRanksOfSummoner(me.getId(), LeaguePlatform.EUW);
+        PlayerRanks myRanks = TfTRanked.getLoLRanksOfSummoner(me.getId(), LeaguePlatform.EUW);
         League masters = TfTRanked.getMasterLeague(LeaguePlatform.EUNE);
         Tactician tactician = Tacticians.getTactician(9016);
         List<MatchDetails> details = MatchDetails.getMatchHistory(me.getPuuid(), LeagueRegion.EUROPE, Map.of());
