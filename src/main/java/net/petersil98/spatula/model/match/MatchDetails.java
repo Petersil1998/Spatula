@@ -2,11 +2,11 @@ package net.petersil98.spatula.model.match;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import net.petersil98.core.constant.Region;
 import net.petersil98.spatula.data.QueueType;
 import net.petersil98.spatula.http.TfTAPI;
 import net.petersil98.spatula.model.Deserializers;
 import net.petersil98.spatula.util.Util;
+import net.petersil98.stcommons.constants.LeagueRegion;
 
 import java.util.List;
 
@@ -33,11 +33,11 @@ public class MatchDetails {
         this.tftSetNumber = tftSetNumber;
     }
 
-    public static MatchDetails getMatchDetails(String matchId, Region region) {
+    public static MatchDetails getMatchDetails(String matchId, LeagueRegion region) {
         return TfTAPI.requestTftMatchEndpoint("matches/", matchId, region, MatchDetails.class);
     }
 
-    public static List<MatchDetails> getMatchHistory(String puuid, Region region, java.util.Map<String, String> filter) {
+    public static List<MatchDetails> getMatchHistory(String puuid, LeagueRegion region, java.util.Map<String, String> filter) {
         Util.validateFilter(filter);
         List<String> matchIds = TfTAPI.requestTftMatchEndpoint("matches/by-puuid/", puuid + "/ids", region, TypeFactory.defaultInstance().constructCollectionType(List.class, String.class), filter);
         return matchIds.stream().map(matchId -> getMatchDetails(matchId, region)).toList();

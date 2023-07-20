@@ -1,6 +1,5 @@
 package net.petersil98.spatula;
 
-import net.petersil98.core.constant.Region;
 import net.petersil98.core.util.EncryptionUtil;
 import net.petersil98.core.util.Loader;
 import net.petersil98.core.util.settings.Language;
@@ -11,6 +10,7 @@ import net.petersil98.spatula.model.TfTRanked;
 import net.petersil98.spatula.model.match.MatchDetails;
 import net.petersil98.spatula.util.TftLoader;
 import net.petersil98.stcommons.constants.LeaguePlatform;
+import net.petersil98.stcommons.constants.LeagueRegion;
 import net.petersil98.stcommons.model.Summoner;
 import net.petersil98.stcommons.model.league.League;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +33,7 @@ public class Spatula {
         TfTRanked myRanks = TfTRanked.getLoLRanksOfSummoner(me.getId(), LeaguePlatform.EUW);
         League masters = TfTRanked.getMasterLeague(LeaguePlatform.EUNE);
         Tactician tactician = Tacticians.getTactician(9016);
-        List<MatchDetails> details = MatchDetails.getMatchHistory(me.getPuuid(), Region.EUROPE, Map.of());
+        List<MatchDetails> details = MatchDetails.getMatchHistory(me.getPuuid(), LeagueRegion.EUROPE, Map.of());
         System.out.println(me);
     }
 }
