@@ -21,10 +21,10 @@ allprojects {
 }
 
 dependencies {
-  ...
-  implementation 'com.github.Petersil1998:Core:v1.3'
-  implementation 'com.github.Petersil1998:STCommons:v1.3'
-  implementation 'com.github.Petersil1998:Spatula:v1.1'
+    ...
+    implementation 'com.github.Petersil1998:Core:v1.3'
+    implementation 'com.github.Petersil1998:STCommons:v1.3'
+    implementation 'com.github.Petersil1998:Spatula:v1.1'
 }
 ```
 
@@ -32,26 +32,26 @@ or using **Maven**:
 
 ```XML
 <repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
 </repositories>
 
 <dependency>
-  <groupId>com.github.Petersil1998</groupId>
-  <artifactId>Core</artifactId>
-  <version>v1.3</version>
+    <groupId>com.github.Petersil1998</groupId>
+    <artifactId>Core</artifactId>
+    <version>v1.3</version>
 </dependency>
 <dependency>
-  <groupId>com.github.Petersil1998</groupId>
-  <artifactId>STCommons</artifactId>
-  <version>v1.3</version>
-  </dependency>
+    <groupId>com.github.Petersil1998</groupId>
+    <artifactId>STCommons</artifactId>
+    <version>v1.3</version>
+</dependency>
 <dependency>
-  <groupId>com.github.Petersil1998</groupId>
-  <artifactId>Spatula</artifactId>
-  <version>v1.1</version>
+    <groupId>com.github.Petersil1998</groupId>
+    <artifactId>Spatula</artifactId>
+    <version>v1.1</version>
 </dependency>
 ```
 
