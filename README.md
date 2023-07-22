@@ -176,7 +176,7 @@ Now Spatula is ready and set up!
 
 - **Collections**
 
-    The package [collection](https://github.com/Petersil1998/Spatula/blob/master/src/main/java/net/petersil98/spatula/collection/) contains a bunch of Collections for static Data including:
+    The package [collection](https://github.com/Petersil1998/Spatula/blob/main/src/main/java/net/petersil98/spatula/collection/) contains a bunch of Collections for static Data including:
   
     - Augments
     - Items
