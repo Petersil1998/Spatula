@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 import static net.petersil98.spatula.model.Deserializers.MAPPER;
 
-public class TftLoader extends Loader {
+public class TfTLoader extends Loader {
 
     private static String latestDDragonVersion;
 

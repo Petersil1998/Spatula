@@ -3,7 +3,7 @@ package net.petersil98.spatula.data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.petersil98.spatula.collection.Items;
 import net.petersil98.spatula.model.Deserializers;
-import net.petersil98.spatula.util.TftLoader;
+import net.petersil98.spatula.util.TfTLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +34,8 @@ public class Item {
     }
 
     public void postInit() {
-        if(TftLoader.ITEMS_COMPOSITIONS.containsKey(this.id)) {
-            TftLoader.ITEMS_COMPOSITIONS.get(this.id).forEach(id -> this.composition.add(Items.getItem(id)));
+        if(TfTLoader.ITEMS_COMPOSITIONS.containsKey(this.id)) {
+            TfTLoader.ITEMS_COMPOSITIONS.get(this.id).forEach(id -> this.composition.add(Items.getItem(id)));
         }
     }
 

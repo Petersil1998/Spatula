@@ -1,9 +1,7 @@
 package net.petersil98.spatula.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.petersil98.spatula.http.TfTAPI;
-import net.petersil98.spatula.model.league.HyperRollEntry;
 import net.petersil98.spatula.model.league.HyperRollLadderEntry;
 import net.petersil98.stcommons.constants.LeaguePlatform;
 import net.petersil98.stcommons.constants.RankedDivision;
@@ -17,7 +15,7 @@ import java.util.Map;
 
 public class TfTRanked {
 
-    public static PlayerRanks getLoLRanksOfSummoner(String summonerId, LeaguePlatform platform) {
+    public static PlayerRanks getTfTRanksOfSummoner(String summonerId, LeaguePlatform platform) {
         return new PlayerRanks(summonerId, platform);
     }
 

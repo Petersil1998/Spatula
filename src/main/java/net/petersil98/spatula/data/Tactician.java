@@ -2,10 +2,9 @@ package net.petersil98.spatula.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.petersil98.spatula.collection.Items;
 import net.petersil98.spatula.collection.Tacticians;
 import net.petersil98.spatula.model.Deserializers;
-import net.petersil98.spatula.util.TftLoader;
+import net.petersil98.spatula.util.TfTLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +42,8 @@ public class Tactician {
     }
 
     public void postInit() {
-        if(TftLoader.TACTICIANS_UPGRADES.containsKey(this.contentId)) {
-            TftLoader.TACTICIANS_UPGRADES.get(this.contentId).forEach(contentId -> this.upgrades.add(Tacticians.getTacticianByContentId(contentId)));
+        if(TfTLoader.TACTICIANS_UPGRADES.containsKey(this.contentId)) {
+            TfTLoader.TACTICIANS_UPGRADES.get(this.contentId).forEach(contentId -> this.upgrades.add(Tacticians.getTacticianByContentId(contentId)));
         }
     }
 

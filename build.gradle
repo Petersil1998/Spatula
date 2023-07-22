@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'net.petersil98'
-version 'v1.1'
+version 'v1.2'
 
 allprojects {
     repositories {
@@ -20,8 +20,8 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.15.2'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
-    implementation 'com.github.Petersil1998:Core:main-SNAPSHOT'
-    implementation 'com.github.Petersil1998:STCommons:main-SNAPSHOT'
+    implementation 'com.github.Petersil1998:Core:v1.3'
+    implementation 'com.github.Petersil1998:STCommons:v1.3'
 }
 
 test {
