@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.petersil98.spatula.collection.*;
 import net.petersil98.spatula.data.*;
 import net.petersil98.spatula.model.league.HyperRollEntry;
@@ -13,6 +12,7 @@ import net.petersil98.spatula.model.match.Companion;
 import net.petersil98.spatula.model.match.MatchDetails;
 import net.petersil98.spatula.model.match.Participant;
 import net.petersil98.stcommons.constants.RankedQueue;
+import net.petersil98.stcommons.constants.STConstants;
 import net.petersil98.stcommons.data.Sprite;
 import net.petersil98.stcommons.model.league.RankEntry;
 
@@ -91,15 +91,16 @@ public class Deserializers {
         public QueueType deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             JsonNode root = p.getCodec().readTree(p);
 
-
             Sprite sprite = new Sprite(root.get("image").get("sprite").asText(),
-                    root.get("image").get("group").asText(),
+                    root.get("image").get("group").asText().replace("-type", ""),
                     root.get("image").get("x").asInt(),
                     root.get("image").get("y").asInt(),
                     root.get("image").get("w").asInt(),
                     root.get("image").get("h").asInt());
             return new QueueType(root.get("id").asInt(), root.get("name").asText(),
-                    root.get("queueType").asText(), sprite, root.get("image").get("full").asText());
+                    root.get("queueType").asText(), sprite, String.format("%scdn/%s/img/%s/%s",
+                    STConstants.DDRAGON_BASE_PATH, STConstants.DDRAGON_VERSION,
+                    sprite.getGroup(), root.get("image").get("full").asText()));
         }
     }
 
@@ -110,10 +111,25 @@ public class Deserializers {
             JsonNode root = p.getCodec().readTree(p);
 
             return new Tactician(root.get("itemId").asInt(), root.get("contentId").asText(),
-                    root.get("level").asInt(), root.get("name").asText(), root.get("loadoutsIcon").asText(),
+                    root.get("level").asInt(), root.get("name").asText(),
+                    "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/" +
+                            root.get("loadoutsIcon").asText().replace("/lol-game-data/assets/", "").toLowerCase(),
                     root.get("description").asText(), root.get("speciesName").asText(), root.get("speciesId").asInt(),
                     MAPPER.readerFor(Tactician.Rarity.class).readValue(root.get("rarity")),
                     root.get("isDefault").asBoolean(), root.get("TFTOnly").asBoolean());
+        }
+    }
+
+    public static class TraitDeserializer extends JsonDeserializer<Trait> {
+
+        @Override
+        public Trait deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            JsonNode root = p.getCodec().readTree(p);
+
+            return new Trait(root.get("apiName").asText(), root.get("desc").asText(),
+                    MAPPER.readerForListOf(Trait.Effect.class).readValue(root.get("effects")),
+                    root.get("name").asText(),
+                    "https://raw.communitydragon.org/latest/game/" + root.get("icon").asText().toLowerCase().replace(".tex", ".png"));
         }
     }
 
@@ -127,7 +143,8 @@ public class Deserializers {
                     .map(node -> Traits.getTraitByIdOrName(node.asText())).toList();
             Map<String, Float> effects = MAPPER.readerForMapOf(Float.class).readValue(root.get("effects"));
             return new Augment(root.get("apiName").asText(), root.get("name").asText(), associatedTraits,
-                    root.get("desc").asText(), effects, root.get("icon").asText());
+                    root.get("desc").asText(), effects,
+                    "https://raw.communitydragon.org/latest/game/" + root.get("icon").asText().toLowerCase().replace(".tex", ".png"));
         }
     }
 
@@ -141,8 +158,14 @@ public class Deserializers {
             Unit.Stats stats = MAPPER.readerFor(Unit.Stats.class).readValue(root.get("stats"));
             List<Trait> traits = StreamSupport.stream(root.get("traits").spliterator(), false)
                     .map(jsonNode -> Traits.getTraitByName(jsonNode.asText())).toList();
+
+            String image = "https://raw.communitydragon.org/latest/game/" + root.get("icon").asText();
+            image = image.substring(0, image.lastIndexOf('.')) + ".png";
+
+            String squareImage = "https://raw.communitydragon.org/latest/game/" + root.get("squareIcon").asText();
+            squareImage = squareImage.substring(0, squareImage.lastIndexOf('.')) + ".png";
             return new Unit(ability, root.get("apiName").asText(), root.get("cost").asInt(),
-                    root.get("icon").asText(), root.get("name").asText(), stats, traits);
+                    image.toLowerCase(), squareImage.toLowerCase(), root.get("name").asText(), stats, traits);
         }
     }
 
@@ -155,7 +178,9 @@ public class Deserializers {
             Map<String, Float> effects = MAPPER.readerForMapOf(Float.class).readValue(root.get("effects"));
             List<Trait> incompatibleTraits = StreamSupport.stream(root.get("incompatibleTraits").spliterator(), false)
                     .map(jsonNode -> Traits.getTraitByIdOrName(jsonNode.asText())).toList();
-            return new Item(root.get("apiName").asText(), root.get("desc").asText(), effects, root.get("icon").asText(),
+            return new Item(root.get("apiName").asText(), root.get("desc").asText(), effects,
+                    "https://raw.communitydragon.org/latest/game/" + root.get("icon").asText().toLowerCase()
+                            .replace(".tex", ".png"),
                     incompatibleTraits, root.get("name").asText(), root.get("unique").asBoolean());
         }
     }

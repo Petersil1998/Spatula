@@ -14,15 +14,17 @@ public class Unit {
     private final String id;
     private final int cost;
     private final String image;
+    private final String squareImage;
     private final String name;
     private final Stats stats;
     private final List<Trait> traits;
 
-    public Unit(Ability ability, String id, int cost, String image, String name, Stats stats, List<Trait> traits) {
+    public Unit(Ability ability, String id, int cost, String image, String squareImage, String name, Stats stats, List<Trait> traits) {
         this.ability = ability;
         this.id = id;
         this.cost = cost;
         this.image = image;
+        this.squareImage = squareImage;
         this.name = name;
         this.stats = stats;
         this.traits = traits;
@@ -42,6 +44,10 @@ public class Unit {
 
     public String getImage() {
         return image;
+    }
+
+    public String getSquareImage() {
+        return squareImage;
     }
 
     public String getName() {

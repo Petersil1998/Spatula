@@ -1,20 +1,30 @@
 package net.petersil98.spatula.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import net.petersil98.spatula.model.Deserializers;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@JsonDeserialize(using = Deserializers.TraitDeserializer.class)
 public class Trait {
 
     @JsonProperty("apiName")
-    private String id;
-    private String desc;
-    private List<Effect> effects;
-    private String name;
-    @JsonProperty("icon")
-    private String image;
+    private final String id;
+    private final String desc;
+    private final List<Effect> effects;
+    private final String name;
+    private final String image;
+
+    public Trait(String id, String desc, List<Effect> effects, String name, String image) {
+        this.id = id;
+        this.desc = desc;
+        this.effects = effects;
+        this.name = name;
+        this.image = image;
+    }
 
     public String getId() {
         return id;
