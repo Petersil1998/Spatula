@@ -98,7 +98,7 @@ public class Deserializers {
                     root.get("image").get("w").asInt(),
                     root.get("image").get("h").asInt());
             return new QueueType(root.get("id").asInt(), root.get("name").asText(),
-                    root.get("queueType").asText(), sprite, String.format("%scdn/%s/img/%s/%s",
+                    root.get("queueType").asText(), sprite, String.format("%s/cdn/%s/img/%s/%s",
                     STConstants.DDRAGON_BASE_PATH, STConstants.DDRAGON_VERSION,
                     sprite.getGroup(), root.get("image").get("full").asText()));
         }
@@ -112,8 +112,9 @@ public class Deserializers {
 
             return new Tactician(root.get("itemId").asInt(), root.get("contentId").asText(),
                     root.get("level").asInt(), root.get("name").asText(),
-                    "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/" +
-                            root.get("loadoutsIcon").asText().replace("/lol-game-data/assets/", "").toLowerCase(),
+                    String.format("%s/latest/plugins/rcp-be-lol-game-data/global/default/%s",
+                            STConstants.CDRAGON_BASE_PATH,
+                            root.get("loadoutsIcon").asText().replace("/lol-game-data/assets/", "").toLowerCase()),
                     root.get("description").asText(), root.get("speciesName").asText(), root.get("speciesId").asInt(),
                     MAPPER.readerFor(Tactician.Rarity.class).readValue(root.get("rarity")),
                     root.get("isDefault").asBoolean(), root.get("TFTOnly").asBoolean());
@@ -128,8 +129,9 @@ public class Deserializers {
 
             return new Trait(root.get("apiName").asText(), root.get("desc").asText(),
                     MAPPER.readerForListOf(Trait.Effect.class).readValue(root.get("effects")),
-                    root.get("name").asText(),
-                    "https://raw.communitydragon.org/latest/game/" + root.get("icon").asText().toLowerCase().replace(".tex", ".png"));
+                    root.get("name").asText(), String.format("%s/latest/game/%s",
+                    STConstants.CDRAGON_BASE_PATH,
+                    root.get("icon").asText().toLowerCase().replace(".tex", ".png")));
         }
     }
 
@@ -143,8 +145,9 @@ public class Deserializers {
                     .map(node -> Traits.getTraitByIdOrName(node.asText())).toList();
             Map<String, Float> effects = MAPPER.readerForMapOf(Float.class).readValue(root.get("effects"));
             return new Augment(root.get("apiName").asText(), root.get("name").asText(), associatedTraits,
-                    root.get("desc").asText(), effects,
-                    "https://raw.communitydragon.org/latest/game/" + root.get("icon").asText().toLowerCase().replace(".tex", ".png"));
+                    root.get("desc").asText(), effects, String.format("%s/latest/game/%s",
+                            STConstants.CDRAGON_BASE_PATH,
+                            root.get("icon").asText().toLowerCase().replace(".tex", ".png")));
         }
     }
 
@@ -159,10 +162,10 @@ public class Deserializers {
             List<Trait> traits = StreamSupport.stream(root.get("traits").spliterator(), false)
                     .map(jsonNode -> Traits.getTraitByName(jsonNode.asText())).toList();
 
-            String image = "https://raw.communitydragon.org/latest/game/" + root.get("icon").asText();
+            String image = String.format("%s/latest/game/%s", STConstants.CDRAGON_BASE_PATH, root.get("icon").asText());
             image = image.substring(0, image.lastIndexOf('.')) + ".png";
 
-            String squareImage = "https://raw.communitydragon.org/latest/game/" + root.get("squareIcon").asText();
+            String squareImage = String.format("%s/latest/game/%s", STConstants.CDRAGON_BASE_PATH, root.get("squareIcon").asText());
             squareImage = squareImage.substring(0, squareImage.lastIndexOf('.')) + ".png";
             return new Unit(ability, root.get("apiName").asText(), root.get("cost").asInt(),
                     image.toLowerCase(), squareImage.toLowerCase(), root.get("name").asText(), stats, traits);
@@ -179,8 +182,8 @@ public class Deserializers {
             List<Trait> incompatibleTraits = StreamSupport.stream(root.get("incompatibleTraits").spliterator(), false)
                     .map(jsonNode -> Traits.getTraitByIdOrName(jsonNode.asText())).toList();
             return new Item(root.get("apiName").asText(), root.get("desc").asText(), effects,
-                    "https://raw.communitydragon.org/latest/game/" + root.get("icon").asText().toLowerCase()
-                            .replace(".tex", ".png"),
+                    String.format("%s/latest/game/%s", STConstants.CDRAGON_BASE_PATH,
+                            root.get("icon").asText().toLowerCase().replace(".tex", ".png")),
                     incompatibleTraits, root.get("name").asText(), root.get("unique").asBoolean());
         }
     }

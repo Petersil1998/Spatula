@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.petersil98.core.Core;
 import net.petersil98.core.util.Loader;
+import net.petersil98.core.util.settings.Language;
 import net.petersil98.core.util.settings.Settings;
 import net.petersil98.spatula.Spatula;
 import net.petersil98.spatula.collection.*;
@@ -42,7 +43,7 @@ public class TfTLoader extends Loader {
 
     @Override
     protected boolean shouldReloadData() {
-        String versionsUrl = STConstants.DDRAGON_BASE_PATH + "api/versions.json";
+        String versionsUrl = STConstants.DDRAGON_BASE_PATH + "/api/versions.json";
         try(InputStream lolVersion = URI.create(versionsUrl).toURL().openConnection().getInputStream()) {
             String[] versions = Core.MAPPER.readValue(IOUtils.toString(new InputStreamReader(lolVersion)), TypeFactory.defaultInstance().constructArrayType(String.class));
             STConstants.DDRAGON_VERSION = versions[0];
@@ -57,7 +58,7 @@ public class TfTLoader extends Loader {
     }
 
     private static void loadLatestVersions() {
-        String versionsUrl = STConstants.DDRAGON_BASE_PATH + "api/versions.json";
+        String versionsUrl = STConstants.DDRAGON_BASE_PATH + "/api/versions.json";
         try(InputStream lolVersion = URI.create(versionsUrl).toURL().openConnection().getInputStream()) {
             String[] versions = Core.MAPPER.readValue(IOUtils.toString(new InputStreamReader(lolVersion)), TypeFactory.defaultInstance().constructArrayType(String.class));
             STConstants.DDRAGON_VERSION = versions[0];
@@ -68,7 +69,8 @@ public class TfTLoader extends Loader {
     }
 
     private void loadQueueTypes() {
-        try(InputStream in = new URI(String.format("%scdn/%s/data/%s/tft-queues.json", STConstants.DDRAGON_BASE_PATH, STConstants.DDRAGON_VERSION, Settings.getLanguage().toString())).toURL().openStream()) {
+        try(InputStream in = new URI(String.format("%s/cdn/%s/data/%s/tft-queues.json",
+                STConstants.DDRAGON_BASE_PATH, STConstants.DDRAGON_VERSION, Settings.getLanguage().toString())).toURL().openStream()) {
             Map<Integer, QueueType> queueTypes = new HashMap<>();
             for(JsonNode queue: MAPPER.readTree(in).get("data")) {
                 QueueType queueType = MAPPER.readerFor(QueueType.class).readValue(queue);
@@ -81,7 +83,9 @@ public class TfTLoader extends Loader {
     }
 
     private void loadTacticians() {
-        try(InputStream in = new URI("https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/companions.json").toURL().openStream()) {
+        String lang = Settings.getLanguage() == Language.EN_US ? "default" : Settings.getLanguage().toString().toLowerCase();
+        try(InputStream in = new URI(String.format("%s/latest/plugins/rcp-be-lol-game-data/global/%s/v1/companions.json",
+                STConstants.CDRAGON_BASE_PATH, lang)).toURL().openStream()) {
             TACTICIANS_UPGRADES.clear();
             Map<Integer, Tactician> tacticians = new HashMap<>();
             for(JsonNode node: MAPPER.readTree(in)) {
@@ -98,7 +102,8 @@ public class TfTLoader extends Loader {
     }
 
     private void loadTraits() {
-        try(InputStream in = new URI(String.format("https://raw.communitydragon.org/latest/cdragon/tft/%s.json", Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
+        try(InputStream in = new URI(String.format("%s/latest/cdragon/tft/%s.json",
+                STConstants.CDRAGON_BASE_PATH, Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
             Set<Trait> traits = new HashSet<>();
             JsonNode rootNode = MAPPER.readTree(in);
             for (JsonNode node: rootNode.get("setData")) {
@@ -114,7 +119,8 @@ public class TfTLoader extends Loader {
     }
 
     private void loadAugments() {
-        try(InputStream in = new URI(String.format("https://raw.communitydragon.org/latest/cdragon/tft/%s.json", Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
+        try(InputStream in = new URI(String.format("%s/latest/cdragon/tft/%s.json",
+                STConstants.CDRAGON_BASE_PATH, Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
             Map<String, Augment> augments = new HashMap<>();
             for (JsonNode node: MAPPER.readTree(in).get("items")) {
                 if(!node.get("apiName").asText().contains("_Augment_")) continue;
@@ -128,7 +134,8 @@ public class TfTLoader extends Loader {
     }
 
     private void loadUnits() {
-        try(InputStream in = new URI(String.format("https://raw.communitydragon.org/latest/cdragon/tft/%s.json", Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
+        try(InputStream in = new URI(String.format("%s/latest/cdragon/tft/%s.json",
+                STConstants.CDRAGON_BASE_PATH, Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
             JsonNode rootNode = MAPPER.readTree(in);
             Set<Unit> units = new HashSet<>();
             for (JsonNode node: rootNode.get("setData")) {
@@ -144,7 +151,8 @@ public class TfTLoader extends Loader {
     }
 
     private void loadItems() {
-        try(InputStream in = new URI(String.format("https://raw.communitydragon.org/latest/cdragon/tft/%s.json", Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
+        try(InputStream in = new URI(String.format("%s/latest/cdragon/tft/%s.json",
+                STConstants.CDRAGON_BASE_PATH, Settings.getLanguage().toString().toLowerCase())).toURL().openStream()) {
             ITEMS_COMPOSITIONS.clear();
             Map<String, Item> items = new HashMap<>();
             for (JsonNode node: MAPPER.readTree(in).get("items")) {
